@@ -1,7 +1,14 @@
 import React from "react";
 
-const page = () => {
-  return <div>page</div>;
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+
+const Base = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(), // you need to pass the headers object.
+  });
+  console.log("session", session);
+  return <div>User: {session?.user.name}</div>;
 };
 
-export default page;
+export default Base;

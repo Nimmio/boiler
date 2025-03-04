@@ -1,0 +1,8 @@
+- [x] Next.js
+- [x] Shadcn
+- [x] Prisma
+- [x] Better Auth
+- [x] Login
+- [ ] Middleware
+- [ ] Groups
+- [ ] Postgresql
