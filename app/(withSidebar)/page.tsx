@@ -7,7 +7,6 @@ const Base = async () => {
   const session = await auth.api.getSession({
     headers: await headers(), // you need to pass the headers object.
   });
-  console.log("session", session);
   return <div>User: {session?.user.name}</div>;
 };
 
