@@ -39,10 +39,7 @@ export default async function RootLayout({
               }}
             >
               <AppSidebar />
-              <main>
-                <SidebarTrigger />
-                {children}
-              </main>
+              {children}
             </UserProvider>
           </SidebarProvider>
         </ThemeProvider>

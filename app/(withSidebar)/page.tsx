@@ -1,13 +1,15 @@
 import React from "react";
 
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import AppPageWithSidebarWrap from "@/components/app-page-with-sidebar-wrap";
 
 const Base = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(), // you need to pass the headers object.
-  });
-  return <div>User: {session?.user.name}</div>;
+  return (
+    <AppPageWithSidebarWrap breadcrumbs={[{ title: "Home" }]}>
+      <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-8">
+        Test
+      </div>
+    </AppPageWithSidebarWrap>
+  );
 };
 
 export default Base;
