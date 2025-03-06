@@ -1,22 +1,31 @@
 "use client";
 
 import IUser from "@/types/User";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
-const DefaultUser: IUser = { email: "", name: "" };
+const DefaultUser: IUser = { email: "", name: "", id: "" };
 const UserContext = createContext({
   user: DefaultUser,
+  updateUser: (user) => {},
 });
 
 export const UserProvider = ({
   children,
-  user,
+  _user,
 }: Readonly<{
   children: React.ReactNode;
-  user: IUser;
+  _user: IUser;
 }>) => {
+  const [user, setUser] = useState<IUser>(_user);
+
+  const updateUser = (user: IUser) => {
+    setUser(user);
+  };
+
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, updateUser }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 

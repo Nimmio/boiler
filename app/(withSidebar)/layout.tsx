@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
@@ -32,10 +32,11 @@ export default async function RootLayout({
         >
           <SidebarProvider>
             <UserProvider
-              user={{
+              _user={{
                 email: session?.user.email || "",
                 name: session?.user.name || "",
                 avatar: session?.user.image || undefined,
+                id: session?.user.id || "",
               }}
             >
               <AppSidebar />
