@@ -3,6 +3,7 @@
 - [x] Prisma
 - [x] Better Auth
 - [x] Login
-- [ ] Middleware
+- [x] Middleware
+- [x] Postgresql
+- [ ] Darkmode
 - [ ] Groups
-- [ ] Postgresql
