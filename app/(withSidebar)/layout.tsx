@@ -6,6 +6,8 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { UserProvider } from "@/context/UserContext";
+import { userIsAdmin } from "@/lib/groups";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,6 +22,8 @@ export default async function RootLayout({
   const session = await auth.api.getSession({
     headers: await headers(), // you need to pass the headers object.
   });
+
+  const isAdmin = await userIsAdmin(session?.user.id || null);
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -39,8 +43,9 @@ export default async function RootLayout({
                 id: session?.user.id || "",
               }}
             >
-              <AppSidebar />
+              <AppSidebar isAdmin={isAdmin} />
               {children}
+              <Toaster />
             </UserProvider>
           </SidebarProvider>
         </ThemeProvider>

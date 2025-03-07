@@ -1,7 +1,5 @@
 "use client";
 
-import { useUser } from "@/context/UserContext";
-import IUser from "@/types/User";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -16,16 +14,12 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { authClient } from "@/lib/auth-client";
 import ImageUpload from "./image-upload";
-
-const MAX_FILE_SIZE = 50000000;
-const ACCEPTED_IMAGE_TYPES = [
-  "data/image",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+import { User } from "@prisma/client";
+import { useUser } from "@/context/UserContext";
+import { updateUser } from "@/app/(withSidebar)/users/action";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -33,35 +27,38 @@ const formSchema = z.object({
   avatar: z.any(),
 });
 
-const AppUserForm = () => {
-  const userContext = useUser();
-  const { user }: { user: IUser } = userContext;
+interface AppUserFormProps {
+  user: User;
+  isCurrentUser?: boolean;
+}
 
+const AppUserForm = (props: AppUserFormProps) => {
+  const { user, isCurrentUser } = props;
+  const userContext = useUser();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: user.name,
       email: user.email,
-      avatar: user.avatar,
+      avatar: user.image,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values", values);
-    authClient
-      .updateUser({
-        name: values.name,
-        image: values.avatar,
-      })
-      .then((responseData) => {
-        if (!responseData.error) {
-          userContext.updateUser({
-            ...user,
-            name: values.name,
-            avatar: values.avatar,
-          });
-        }
-      });
+    const { name, avatar } = values;
+
+    updateUser({ ...user, name: name, image: avatar }).then(() => {
+      if (isCurrentUser) {
+        userContext.updateUser({
+          ...user,
+          name: name,
+          avatar: avatar,
+        });
+      }
+      toast("Updated User");
+      router.push("/users");
+    });
   }
 
   return (

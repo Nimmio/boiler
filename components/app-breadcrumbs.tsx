@@ -1,14 +1,14 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Separator } from "./ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
 import IBreadcrumb from "@/types/Breadcrumb";
+import Link from "next/link";
 
 const AppBreadcrumbs = ({
   breadcrumbs,
@@ -21,18 +21,20 @@ const AppBreadcrumbs = ({
           {breadcrumbs.map((breadcrumb, index) => {
             if (index + 1 !== breadcrumbs.length) {
               return (
-                <>
+                <Fragment key={`${breadcrumb.title}_${index}`}>
                   <BreadcrumbItem className="hidden md:block">
                     {breadcrumb.link ? (
-                      <BreadcrumbLink href={breadcrumb.link}>
-                        {breadcrumb.title}
-                      </BreadcrumbLink>
+                      <Link href={breadcrumb.link}>
+                        <BreadcrumbPage className="underline underline-offset-3">
+                          {breadcrumb.title}
+                        </BreadcrumbPage>
+                      </Link>
                     ) : (
                       breadcrumb.title
                     )}
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
-                </>
+                </Fragment>
               );
             } else {
               return (

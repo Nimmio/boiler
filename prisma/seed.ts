@@ -2,24 +2,77 @@ import { auth } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-async function seedAuthUser() {
+async function seedAdminUser() {
   console.log("Starting to Seed Admin User");
-  const data = await auth.api.signUpEmail({
+  await auth.api.signUpEmail({
     body: {
-      email: "admin@admin.com", // user email address
-      password: "password123", // user password -> min 8 characters by default
-      name: "Admin", // user display name
+      email: "admin@admin.com",
+      password: "password123",
+      name: "Admin",
     },
   });
-  console.log("Data", data);
+}
+
+const seedAdminGroup = async () => {
+  await prisma.group.upsert({
+    where: { name: "Admins" },
+    update: {},
+    create: {
+      name: "Admins",
+      users: {
+        create: [
+          {
+            assignedBy: "Seed",
+            user: {
+              connect: {
+                email: "admin@admin.com",
+              },
+            },
+          },
+        ],
+      },
+    },
+  });
+};
+
+async function setSuperadmin() {
+  await prisma.user.update({
+    where: {
+      email: "admin@admin.com",
+    },
+    data: {
+      superadmin: true,
+    },
+  });
+}
+
+async function seedAdditionalUser() {
+  await auth.api.signUpEmail({
+    body: {
+      email: "alice@test.com",
+      password: "alice123",
+      name: "Alice",
+    },
+  });
+
+  await auth.api.signUpEmail({
+    body: {
+      email: "bob@test.com",
+      password: "bob12345",
+      name: "Bob",
+    },
+  });
 }
 
 async function main() {
-  const admin = await prisma.user.findFirst({ where: { name: "Admin" } });
-  if (!admin) await seedAuthUser();
-  /*
-Add additonal seeds here
-*/
+  const admin = await prisma.user.findFirst({
+    where: { email: "admin@admin.com" },
+  });
+
+  if (!admin) await seedAdminUser();
+  await seedAdminGroup();
+  await setSuperadmin();
+  await seedAdditionalUser();
 }
 
 main()
