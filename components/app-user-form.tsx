@@ -20,6 +20,7 @@ import { useUser } from "@/context/UserContext";
 import { updateUser } from "@/app/(withSidebar)/users/action";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -28,7 +29,7 @@ const formSchema = z.object({
 });
 
 interface AppUserFormProps {
-  user: User;
+  user: User | "new";
   isCurrentUser?: boolean;
 }
 
@@ -36,29 +37,34 @@ const AppUserForm = (props: AppUserFormProps) => {
   const { user, isCurrentUser } = props;
   const userContext = useUser();
   const router = useRouter();
+
+  const { name, email, image } =
+    user !== "new" ? user : { name: "", email: "", image: "" };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: user.name,
-      email: user.email,
-      avatar: user.image,
+      name: name,
+      email: email,
+      avatar: image,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const { name, avatar } = values;
-
-    updateUser({ ...user, name: name, image: avatar }).then(() => {
-      if (isCurrentUser) {
-        userContext.updateUser({
-          ...user,
-          name: name,
-          avatar: avatar,
-        });
-      }
-      toast("Updated User");
-      router.push("/users");
-    });
+    if (user !== "new") {
+      updateUser({ ...user, name: name, image: avatar }).then(() => {
+        if (isCurrentUser) {
+          userContext.updateUser({
+            ...user,
+            name: name,
+            avatar: avatar,
+          });
+        }
+        toast("Updated User");
+        router.push("/users");
+      });
+    }
   }
 
   return (
@@ -85,6 +91,20 @@ const AppUserForm = (props: AppUserFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            disabled
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
