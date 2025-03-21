@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+
+import { authClient } from "@/lib/auth-client";
 import {
   Form,
   FormControl,
@@ -20,8 +22,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { authClient } from "@/lib/auth-client";
+} from "@/components/ui/form";
 
 //TODO: Better Schema and Messages
 
