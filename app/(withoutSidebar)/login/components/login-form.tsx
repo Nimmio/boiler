@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import Link from "next/link";
 
 //TODO: Better Schema and Messages
 
@@ -108,7 +109,9 @@ export function LoginForm({
             </Form>
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Button variant="link">Sign up</Button>
+              <Link href={"/signup"}>
+                <Button variant="link">Sign up</Button>
+              </Link>
             </div>
           </div>
         </CardContent>
